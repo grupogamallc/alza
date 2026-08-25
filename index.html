@@ -459,7 +459,7 @@ function saveIntention(v){getDay().intention=v;save();}
 function macrosModule(){
   const t=todayFoodTotals();const g=S.goals;const d=getDay();
   const macro=(lbl,val,goal,col)=>`<div class="macrobar"><div class="r"><span>${lbl}</span><span class="tnum">${Math.round(val)} / ${goal}g</span></div><div class="bar"><i style="width:${Math.min(100,val/goal*100)}%;background:${col}"></i></div></div>`;
-  const scanBtn=('BarcodeDetector' in window)?`<button class="pillbtn ghost" style="flex:1" onclick="startScan()">${ic('scan',18)} Escanear</button>`:"";
+  const scanBtn=`<button class="pillbtn ghost" style="flex:1" onclick="startScan()">${ic('scan',18)} Escanear</button>`;
   return `<div class="sec-title" style="color:var(--cuerpo)">Nutrición · macros</div>
   <div class="card">
     <div class="row" style="margin-bottom:14px">
@@ -545,15 +545,33 @@ async function lookupBarcode(code){
   }catch(e){}
   addFoodSheet(code);
 }
-let scanStream,scanRAF;
+let scanStream,scanRAF,_zxing,_zxload;
+function loadZXing(){
+  if(window.ZXing)return Promise.resolve();
+  if(_zxload)return _zxload;
+  _zxload=new Promise((res,rej)=>{const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js";s.onload=()=>res();s.onerror=()=>rej(new Error("zxing"));document.head.appendChild(s);});
+  return _zxload;
+}
 async function startScan(){
   const el=document.getElementById("scan");el.classList.add("on");const vid=document.getElementById("scanvid");
-  try{scanStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});vid.srcObject=scanStream;await vid.play();
-    const det=new BarcodeDetector({formats:["ean_13","ean_8","upc_a","upc_e","code_128"]});
-    const tick=async()=>{if(!el.classList.contains("on"))return;try{const c=await det.detect(vid);if(c.length){const code=c[0].rawValue;stopScan();lookupBarcode(code);return;}}catch(e){}scanRAF=requestAnimationFrame(tick);};tick();
+  // Native path (Chrome/Android): BarcodeDetector
+  if("BarcodeDetector" in window){
+    try{scanStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}}});vid.setAttribute("playsinline","");vid.srcObject=scanStream;await vid.play();
+      const det=new BarcodeDetector({formats:["ean_13","ean_8","upc_a","upc_e","code_128"]});
+      const tick=async()=>{if(!el.classList.contains("on"))return;try{const c=await det.detect(vid);if(c.length){const code=c[0].rawValue;stopScan();lookupBarcode(code);return;}}catch(e){}scanRAF=requestAnimationFrame(tick);};tick();
+      return;
+    }catch(e){/* fall through to ZXing */}
+  }
+  // Fallback path (Safari/iPhone + everyone else): ZXing from CDN
+  try{
+    await loadZXing();
+    _zxing=new ZXing.BrowserMultiFormatReader();
+    await _zxing.decodeFromConstraints({video:{facingMode:{ideal:"environment"}}},vid,(result,err)=>{
+      if(result&&el.classList.contains("on")){const code=result.getText();stopScan();lookupBarcode(code);}
+    });
   }catch(e){stopScan();toast("No pude abrir la cámara aquí");}
 }
-function stopScan(){const el=document.getElementById("scan");el.classList.remove("on");if(scanRAF)cancelAnimationFrame(scanRAF);if(scanStream){scanStream.getTracks().forEach(t=>t.stop());scanStream=null;}}
+function stopScan(){const el=document.getElementById("scan");el.classList.remove("on");if(scanRAF)cancelAnimationFrame(scanRAF);if(_zxing){try{_zxing.reset();}catch(e){}_zxing=null;}if(scanStream){scanStream.getTracks().forEach(t=>t.stop());scanStream=null;}}
 
 /* ---- CUERPO: recovery ---- */
 function recoveryModule(){
