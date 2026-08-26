@@ -71,25 +71,38 @@ textarea{resize:vertical;min-height:90px;line-height:1.5}
 .ring .big{font-family:"Bricolage Grotesque";font-weight:800;line-height:1}
 
 /* PANEL HERO */
-.p-hero{position:relative;border-radius:20px;overflow:hidden;padding:18px 18px 6px;margin-bottom:14px;border:1px solid var(--line);text-align:center}
-.p-hero .glow{position:absolute;inset:0;background:radial-gradient(70% 60% at 50% 8%,rgba(123,92,255,.16),transparent 55%),radial-gradient(60% 50% at 18% 90%,rgba(67,214,160,.14),transparent 60%),radial-gradient(60% 50% at 82% 90%,rgba(255,193,94,.16),transparent 60%)}
+.p-hero{position:relative;border-radius:24px;overflow:hidden;padding:20px 18px 18px;margin-bottom:14px;border:1px solid var(--line);text-align:center;background:linear-gradient(180deg,#0C0C15,#08080D 62%);box-shadow:0 34px 70px -48px #000,inset 0 1px 0 rgba(255,255,255,.04)}
+.p-hero .aurora{position:absolute;inset:-2px;z-index:0;background:radial-gradient(60% 42% at 50% 4%,rgba(123,92,255,.28),transparent 60%),radial-gradient(52% 40% at 14% 96%,rgba(67,214,160,.22),transparent 62%),radial-gradient(52% 40% at 86% 96%,rgba(255,193,94,.26),transparent 62%);animation:breathe 9s ease-in-out infinite}
+.p-hero .aurora.b{filter:blur(9px);opacity:.5;animation-duration:13s;animation-direction:alternate-reverse}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:.78}50%{transform:scale(1.07);opacity:1}}
+.p-hero .grain{position:absolute;inset:0;z-index:0;background:radial-gradient(circle at 50% 42%,transparent 58%,rgba(0,0,0,.5) 100%)}
 .p-hero>*{position:relative;z-index:2}
-.p-hero .greet{font-size:23px;margin-top:2px}
-.p-hero .aura{font-family:"Fraunces";font-style:italic;color:var(--golds);font-size:14px;margin-top:2px}
+.p-hero .greet{font-size:25px;margin-top:6px}
+.p-hero .greet .sun{display:inline-flex;vertical-align:-4px;margin-left:3px;color:var(--gold);filter:drop-shadow(0 0 10px rgba(255,193,94,.5))}
+.p-hero .sub{font-family:"Fraunces";font-style:italic;color:var(--golds);font-size:15px;margin-top:4px;opacity:.92}
 
-/* TRIANGLE */
-.tri{position:relative;width:100%;max-width:300px;margin:16px auto 10px;aspect-ratio:1/1.08}
-.tri svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-.node{position:absolute;transform:translate(-50%,-50%);width:70px;height:70px}
-.node .rg{width:70px;height:70px;border-radius:50%;position:relative;display:grid;place-items:center}
-.node .rg::before{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(var(--c) calc(var(--pct)*360deg),#282838 0);-webkit-mask:radial-gradient(closest-side,transparent 70%,#000 71%);mask:radial-gradient(closest-side,transparent 70%,#000 71%)}
-.node .core{position:absolute;inset:8px;border-radius:50%;background:var(--ink2);display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05),0 6px 18px -8px #000}
-.node .core svg{width:26px;height:26px;display:block}
-.node .nlab{position:absolute;left:50%;transform:translateX(-50%);text-align:center;white-space:nowrap;pointer-events:none}
-.node.n-top .nlab{bottom:100%;margin-bottom:10px}
-.node.n-bot .nlab{top:100%;margin-top:10px}
-.node .lbl{font-family:"Bricolage Grotesque";font-weight:800;font-size:13.5px;letter-spacing:.02em}
-.node .pc{font-family:"JetBrains Mono";font-size:11px;color:var(--mid);margin-top:1px}
+/* STAGE (triangulo Mente/Cuerpo/Alma) */
+.stage{position:relative;width:100%;max-width:352px;margin:8px auto 2px}
+.stage svg{display:block;width:100%;height:auto;overflow:visible}
+.tri-fill{transition:opacity 1.2s ease}
+.stage .track{fill:none;stroke:#20202f;stroke-width:6}
+.stage .pr{fill:none;stroke-width:6;stroke-linecap:round;transform:rotate(-90deg);transform-origin:center;transform-box:fill-box;transition:stroke-dashoffset 1.25s cubic-bezier(.22,.9,.24,1)}
+.stage .disc{fill:var(--ink2);stroke:rgba(255,255,255,.06)}
+.stage .halo{opacity:0;transform-origin:center;transform-box:fill-box}
+.stage .halo.on{animation:halo 2.6s ease-in-out infinite}
+@keyframes halo{0%,100%{opacity:0;transform:scale(.92)}50%{opacity:.5;transform:scale(1.12)}}
+.stage .core-num{font-family:"Bricolage Grotesque";font-weight:800;fill:#fff;text-anchor:middle;letter-spacing:-.02em}
+.stage .core-cap{font-family:"JetBrains Mono";font-size:9px;letter-spacing:.22em;text-anchor:middle}
+.stage .n-lab{font-family:"Bricolage Grotesque";font-weight:800;text-anchor:middle;letter-spacing:.01em}
+.stage .n-pct{font-family:"JetBrains Mono";font-weight:500;text-anchor:middle;fill:var(--mid)}
+
+/* stat chips dentro del hero */
+.hstats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px}
+.hstat{border:1px solid var(--line);border-radius:14px;padding:11px 5px 10px;background:rgba(255,255,255,.02);display:flex;flex-direction:column;align-items:center;gap:3px}
+.hstat.tap{cursor:pointer}
+.hstat .sk{font-family:"JetBrains Mono";font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.hstat .sv{font-family:"Bricolage Grotesque";font-weight:800;font-size:19px;line-height:1}
+.hstat .sv small{font-size:10px;color:var(--dim);font-weight:600}
 
 /* pillar hero (sub pages) */
 .ph{position:relative;border-radius:20px;overflow:hidden;padding:18px;margin-bottom:14px;border:1px solid var(--line)}
@@ -308,9 +321,9 @@ function ringStyle(pct,color,size){return `width:${size}px;height:${size}px;back
 /* ============ ICON SYSTEM (monoline propio) ============ */
 const ICONS={
  sunrise:'<line x1="3" y1="20" x2="21" y2="20"/><path d="M7.5 20a4.5 4.5 0 0 1 9 0"/><line x1="12" y1="4.5" x2="12" y2="8"/><line x1="4.8" y1="9.8" x2="6.6" y2="11.6"/><line x1="19.2" y1="9.8" x2="17.4" y2="11.6"/>',
- mind:'<path d="M12 3.5l7.4 4.25v8.5L12 20.5l-7.4-4.25v-8.5z"/><circle cx="12" cy="12" r="2.2"/>',
- body:'<line x1="6" y1="6.5" x2="6" y2="17.5"/><line x1="9" y1="8.5" x2="9" y2="15.5"/><line x1="15" y1="8.5" x2="15" y2="15.5"/><line x1="18" y1="6.5" x2="18" y2="17.5"/><line x1="9" y1="12" x2="15" y2="12"/>',
- spirit:'<circle cx="12" cy="12" r="3.6"/><line x1="12" y1="2.6" x2="12" y2="5.2"/><line x1="12" y1="18.8" x2="12" y2="21.4"/><line x1="2.6" y1="12" x2="5.2" y2="12"/><line x1="18.8" y1="12" x2="21.4" y2="12"/><line x1="5.4" y1="5.4" x2="7.2" y2="7.2"/><line x1="16.8" y1="16.8" x2="18.6" y2="18.6"/><line x1="16.8" y1="7.2" x2="18.6" y2="5.4"/><line x1="5.4" y1="18.6" x2="7.2" y2="16.8"/>',
+ mind:'<path d="M12 2.7 L20 7.35 V16.65 L12 21.3 L4 16.65 V7.35 Z"/><path d="M12 7.9 L15.6 9.95 V14.05 L12 16.1 L8.4 14.05 V9.95 Z"/>',
+ body:'<path d="M4.7 8.6 V15.4"/><path d="M7.6 6.4 V17.6"/><path d="M16.4 6.4 V17.6"/><path d="M19.3 8.6 V15.4"/><path d="M7.6 12 H16.4"/>',
+ spirit:'<circle cx="12" cy="12" r="3.3" fill="currentColor" stroke="none"/><path d="M12 2.5V4.9M12 19.1v2.4M2.5 12H4.9M19.1 12h2.4M5.2 5.2l1.7 1.7M17.1 17.1l1.7 1.7M18.8 5.2l-1.7 1.7M6.9 17.1l-1.7 1.7"/>',
  book:'<path d="M12 6.6V20"/><path d="M4 5h4a3 3 0 0 1 3 3v11a2.4 2.4 0 0 0-2.4-1.9H4z"/><path d="M20 5h-4a3 3 0 0 0-3 3"/>',
  target:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.2"/>',
  pen:'<path d="M12 20h8"/><path d="M15.5 4.5a2 2 0 0 1 3 3L8 18l-4 1 1-4z"/>',
@@ -338,6 +351,7 @@ function render(){
   app.innerHTML=bar()+`<div class="view">${
     t==="panel"?vPanel():(t==="mente"||t==="cuerpo"||t==="alma")?vPillar(t):vPanel()
   }</div>`+nav();
+  if(t==="panel")requestAnimationFrame(()=>setTimeout(animatePanel,60));
   save();
 }
 function bar(){
@@ -354,21 +368,22 @@ function go(t){S.ui.tab=t;render();window.scrollTo(0,0);}
 
 /* ============ PANEL ============ */
 function vPanel(){
-  const ov=overallPct();const q=S.quotes[dayOfYear()%S.quotes.length];const v=S.verses[dayOfYear()%S.verses.length];
+  const q=S.quotes[dayOfYear()%S.quotes.length];const v=S.verses[dayOfYear()%S.verses.length];
   const ft=todayFoodTotals();const rec=getDay().rec;
+  const recStr=rec.recovery!=null?`<span data-count="${rec.recovery}">0</span><small>%</small>`:'<small>—</small>';
   return `
   <div class="p-hero">
-    <div class="glow"></div>
+    <div class="aurora"></div><div class="aurora b"></div><div class="grain"></div>
     <div class="eye">${new Date().toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'})}</div>
-    <div class="greet">${greetWord()}, ${esc(S.profile.name)} <span style="color:var(--gold);display:inline-flex;vertical-align:-3px">${ic('sunrise',20)}</span></div>
-    <div class="aura">Equilibrio de hoy · ${aura(ov)} · ${Math.round(ov*100)}%</div>
-    ${triangle()}
-  </div>
-  <div class="statgrid">
-    <div class="mini" onclick="go('cuerpo')"><div class="k dim">Calorías</div><div class="v tnum">${Math.round(ft.kc)}<small>/${S.goals.kcal}</small></div></div>
-    <div class="mini" onclick="go('cuerpo')"><div class="k dim">Recovery</div><div class="v tnum">${rec.recovery!=null?rec.recovery+'<small>%</small>':'<small>—</small>'}</div></div>
-    <div class="mini"><div class="k dim">Racha</div><div class="v tnum">${streak()}<small> días</small></div></div>
-    <div class="mini"><div class="k dim">Momentum</div><div class="v tnum">${momentumScore()}<small>/100</small></div></div>
+    <div class="greet">${greetWord()}, ${esc(S.profile.name)} <span class="sun">${ic('sunrise',22)}</span></div>
+    <div class="sub">Tu equilibrio de hoy</div>
+    ${stage()}
+    <div class="hstats">
+      <div class="hstat"><span class="sk">Racha</span><span class="sv"><span data-count="${streak()}">0</span><small> d</small></span></div>
+      <div class="hstat tap" onclick="go('cuerpo')"><span class="sk">Recovery</span><span class="sv">${recStr}</span></div>
+      <div class="hstat tap" onclick="go('cuerpo')"><span class="sk">Kcal</span><span class="sv"><span data-count="${Math.round(ft.kc)||0}">0</span></span></div>
+      <div class="hstat"><span class="sk">Momentum</span><span class="sv"><span data-count="${momentumScore()}">0</span><small>/100</small></span></div>
+    </div>
   </div>
   <div class="sec-title">Palabra de hoy</div>
   <div class="quote"><div class="q">"${esc(q.t)}"</div><div class="att">— ${esc(q.a)}</div></div>
@@ -377,27 +392,58 @@ function vPanel(){
   <div class="card">${momentumChart()}</div>
   <div style="height:8px"></div>`;
 }
-function triangle(){
-  const pm=pillarPct("mente"),pc=pillarPct("cuerpo"),pa=pillarPct("alma");const ov=overallPct();
-  const nodes=[
-   ["mente",pm,50,29,"n-top"],["cuerpo",pc,18,75,"n-bot"],["alma",pa,82,75,"n-bot"]
-  ];
-  const nodeHtml=nodes.map(([id,pct,x,y,cls])=>{const P=PILLARS[id];
-    return `<div class="node ${cls}" style="left:${x}%;top:${y}%" onclick="go('${id}')">
-      <div class="rg" style="--c:${P.color};--pct:${pct.toFixed(3)}"><span class="core" style="color:${P.color}">${ic(P.icon,26,1.9)}</span></div>
-      <div class="nlab"><div class="lbl" style="color:${P.color}">${P.name}</div><div class="pc tnum">${Math.round(pct*100)}%</div></div>
-    </div>`;}).join("");
-  return `<div class="tri">
-    <svg viewBox="0 0 300 300">
-     <defs><linearGradient id="triG" x1="0" y1="0" x2="1" y2="1">
-       <stop offset="0" stop-color="#7B5CFF"/><stop offset="0.5" stop-color="#43D6A0"/><stop offset="1" stop-color="#FFC15E"/>
-     </linearGradient></defs>
-     <polygon points="150,86 54,224 246,224" fill="url(#triG)" opacity="${(0.1+ov*0.28).toFixed(2)}"/>
-     <polygon points="150,86 54,224 246,224" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="1.3" stroke-linejoin="round"/>
-    </svg>
-    ${nodeHtml}
+function stage(){
+  const D={mente:pillarPct("mente"),cuerpo:pillarPct("cuerpo"),alma:pillarPct("alma")};
+  const ov=Math.round(overallPct()*100);
+  const NODES={mente:{cx:180,cy:72},cuerpo:{cx:76,cy:240},alma:{cx:284,cy:240}};
+  const R=32,C=2*Math.PI*R;
+  const top=Object.keys(D).reduce((a,b)=>D[a]>=D[b]?a:b);
+  let nodes="";
+  for(const k in NODES){const P=PILLARS[k];const n=NODES[k];const pct=D[k];const isTop=n.cy<150;
+    const off=(C*(1-pct)).toFixed(2);
+    const labY=isTop?n.cy-52:n.cy+58, pctY=isTop?n.cy-37:n.cy+73;
+    nodes+=`<g>
+      <circle class="halo${k===top?' on':''}" cx="${n.cx}" cy="${n.cy}" r="30" fill="${P.color}" filter="url(#soft)"/>
+      <circle class="track" cx="${n.cx}" cy="${n.cy}" r="${R}"/>
+      <circle class="pr" data-off="${off}" cx="${n.cx}" cy="${n.cy}" r="${R}" stroke="${P.color}" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}"/>
+      <circle class="disc" cx="${n.cx}" cy="${n.cy}" r="${R-7}"/>
+      <g transform="translate(${n.cx-13},${n.cy-13}) scale(1.08)" fill="none" stroke="${P.color}" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 6px ${P.color}66)">${ICONS[P.icon]}</g>
+      <text class="n-lab" x="${n.cx}" y="${labY}" font-size="14" fill="${P.color}" onclick="go('${k}')" style="cursor:pointer">${P.name.toUpperCase()}</text>
+      <text class="n-pct" data-pct="${Math.round(pct*100)}" x="${n.cx}" y="${pctY}" font-size="12">0%</text>
+    </g>`;
+  }
+  const triOp=(0.42+overallPct()*0.5).toFixed(2);
+  return `<div class="stage">
+   <svg viewBox="0 0 360 300" onclick="if(!event.target.closest('[onclick*=go]'))animatePanel()">
+    <defs>
+     <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7B5CFF"/><stop offset=".5" stop-color="#43D6A0"/><stop offset="1" stop-color="#FFC15E"/></linearGradient>
+     <radialGradient id="triG" cx="50%" cy="60%" r="65%"><stop offset="0" stop-color="#FFC15E" stop-opacity=".22"/><stop offset=".55" stop-color="#43D6A0" stop-opacity=".12"/><stop offset="1" stop-color="#7B5CFF" stop-opacity=".06"/></radialGradient>
+     <radialGradient id="coreG" cx="50%" cy="42%" r="70%"><stop offset="0" stop-color="#1A1A28"/><stop offset="1" stop-color="#0B0B12"/></radialGradient>
+     <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3"/></filter>
+    </defs>
+    <polygon id="triFill" class="tri-fill" data-op="${triOp}" points="180,74 76,240 284,240" fill="url(#triG)" opacity="0"/>
+    <polygon points="180,74 76,240 284,240" fill="none" stroke="url(#edge)" stroke-width="1.4" stroke-dasharray="3 7" stroke-linejoin="round" opacity=".5"/>
+    <circle cx="180" cy="182" r="47" fill="url(#coreG)" stroke="rgba(255,255,255,.08)"/>
+    <circle cx="180" cy="182" r="47" fill="none" stroke="url(#edge)" stroke-opacity=".28" stroke-width="1.2"/>
+    <text id="coreNum" class="core-num" data-ov="${ov}" x="180" y="186" font-size="40">0<tspan font-size="18" dy="-14">%</tspan></text>
+    <text class="core-cap" x="180" y="208" fill="#FFC15E">${aura(overallPct()).toUpperCase()}</text>
+    ${nodes}
+   </svg>
   </div>`;
 }
+function animatePanel(){
+  const svg=document.querySelector(".stage svg");if(!svg)return;
+  svg.querySelectorAll(".pr").forEach(el=>el.style.strokeDashoffset=el.getAttribute("stroke-dasharray"));
+  requestAnimationFrame(()=>{
+    svg.querySelectorAll(".pr").forEach((el,i)=>{const off=el.dataset.off;setTimeout(()=>el.style.strokeDashoffset=off,120+i*140);});
+  });
+  const tf=document.getElementById("triFill");if(tf){tf.style.opacity=0;requestAnimationFrame(()=>{setTimeout(()=>tf.style.opacity=tf.dataset.op,220);});}
+  svg.querySelectorAll("[data-pct]").forEach((el,i)=>{setTimeout(()=>cUp(el,+el.dataset.pct,900,v=>v+"%"),180+i*140);});
+  const cn=document.getElementById("coreNum");if(cn)setTimeout(()=>cCore(cn,+cn.dataset.ov,1200),240);
+  document.querySelectorAll(".hstat [data-count]").forEach((el,i)=>{setTimeout(()=>cUp(el,+el.dataset.count,900,v=>v.toLocaleString('es-MX')),320+i*80);});
+}
+function cUp(el,to,dur,fmt){fmt=fmt||(v=>v);to=to||0;const t0=performance.now();(function s(t){const p=Math.min(1,(t-t0)/dur);const e=1-Math.pow(1-p,3);el.textContent=fmt(Math.round(e*to));if(p<1)requestAnimationFrame(s);})(t0);}
+function cCore(el,to,dur){const t0=performance.now();(function s(t){const p=Math.min(1,(t-t0)/dur);const e=1-Math.pow(1-p,3);el.innerHTML=Math.round(e*to)+'<tspan font-size="18" dy="-14">%</tspan>';if(p<1)requestAnimationFrame(s);})(t0);}
 function momentumScore(){let s=0;for(let i=0;i<7;i++){const d=new Date();d.setDate(d.getDate()-i);const k=todayKey(d);s+=S.days[k]?overallPct(k):0;}return Math.round(s/7*100);}
 function momentumChart(){
   let bars="";for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=todayKey(d);
