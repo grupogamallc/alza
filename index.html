@@ -507,7 +507,7 @@ function vPillar(p){
   const P=PILLARS[p];const pct=pillarPct(p);
   let modules="";
   if(p==="mente"){modules=habitBlock(p)+quoteModule()+journalModule()+videoModule(p);}
-  if(p==="cuerpo"){modules=habitBlock(p)+macrosModule()+recoveryModule()+videoModule(p);}
+  if(p==="cuerpo"){modules=habitBlock(p)+recoveryModule()+macrosModule()+videoModule(p);}
   if(p==="alma"){modules=habitBlock(p)+verseModule()+intentionModule()+videoModule(p);}
   return `
   <div class="ph" style="--p:${pct}">
