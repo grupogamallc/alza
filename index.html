@@ -288,9 +288,36 @@ const DEFAULT={
   foodDB:JSON.parse(JSON.stringify(SEED_FOODS)),
   quotes:JSON.parse(JSON.stringify(SEED_QUOTES)),
   verses:JSON.parse(JSON.stringify(SEED_VERSES)),
-  videos:[],days:{},ui:{tab:"panel"}
+  videos:[],days:{},whoop:{on:false,last:null},ui:{tab:"panel"}
 };
 let S=load();
+if(!S.whoop)S.whoop={on:false,last:null};
+/* ===== WHOOP ===== */
+const WHOOP_BASE="https://wgkwfctbwiwoaycbtuia.supabase.co/functions/v1";
+const WHOOP_KEY="83da7afab473474bb0e8bddacfe7824b";
+async function syncWhoop(silent){
+  try{
+    const r=await fetch(`${WHOOP_BASE}/whoop-data?k=${WHOOP_KEY}&_=${Date.now()}`);
+    const d=await r.json();
+    if(!d||!d.connected){return d;}
+    S.whoop.on=true;S.whoop.last={...d};
+    const rec=getDay().rec;
+    if(d.recovery!=null)rec.recovery=Math.round(d.recovery);
+    if(d.strain!=null)rec.strain=+(+d.strain).toFixed(1);
+    if(d.calories!=null)rec.cal=Math.round(d.calories);
+    if(d.hrv!=null)rec.hrv=Math.round(d.hrv);
+    if(d.sleep!=null)rec.sleep=Math.round(d.sleep);
+    save();
+    if(!silent){render();toast("WHOOP actualizado");}else if(S.ui.tab==="cuerpo"||S.ui.tab==="panel")render();
+    return d;
+  }catch(e){if(!silent)toast("No pude conectar con WHOOP");return null;}
+}
+function connectWhoop(){location.href=`${WHOOP_BASE}/whoop-connect`;}
+(function whoopReturn(){try{const p=new URLSearchParams(location.search);const w=p.get("whoop");
+  if(w){history.replaceState({},"",location.pathname);
+    if(w==="ok"){S.whoop.on=true;save();setTimeout(()=>{toast("WHOOP conectado ✓");syncWhoop();},300);}
+    else{setTimeout(()=>toast("WHOOP: no se pudo conectar, intenta de nuevo"),300);}
+  }}catch(e){}})();
 (function migrate(){const map={read:"book",visual:"target",journal:"pen",learn:"headphones",macros:"utensils",train:"activity",sleep:"moon",water:"drop",medit:"meditate",pray:"cross",grat:"heart"};(S.habits||[]).forEach(h=>{if(!h.icon)h.icon=map[h.id]||"star";if(h.em)delete h.em;});})();
 function load(){
   try{let r=localStorage.getItem(KEY);
@@ -647,7 +674,25 @@ function recoveryModule(){
     <div class="g2">${inp("sleep","Sueño (h)")}${inp("cal","Calorías")}</div>
     <div class="g2">${inp("hrv","HRV (ms)")}${inp("steps","Pasos")}</div>
   </div>
-  <div class="card tight" style="display:flex;gap:11px;align-items:center"><div style="color:var(--cuerpo);display:inline-flex;flex:none">${ic('watch',22)}</div><div class="dim" style="font-size:12.5px">Hoy los capturas a mano. En la versión instalada, se conecta a <b style="color:var(--cuerpo)">WHOOP</b> y se llena solo.</div></div>`;
+  ${whoopCard()}`;
+}
+function whoopCard(){
+  if(S.whoop&&S.whoop.on){
+    const l=S.whoop.last||{};
+    const when=l.at?new Date(l.at).toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'}):"—";
+    const bits=[];
+    if(l.strain!=null)bits.push(`Strain ${(+l.strain).toFixed(1)}`);
+    if(l.calories!=null)bits.push(`${Math.round(l.calories)} kcal`);
+    if(l.sleep!=null)bits.push(`Sueño ${Math.round(l.sleep)}%`);
+    if(l.rhr!=null)bits.push(`RHR ${l.rhr}`);
+    return `<div class="card tight" style="display:flex;gap:11px;align-items:center">
+      <div style="color:var(--cuerpo);display:inline-flex;flex:none">${ic('watch',22)}</div>
+      <div style="flex:1"><div style="font-size:13px"><b style="color:var(--cuerpo)">WHOOP conectado</b> · ${esc(when)}</div>
+        <div class="dim mono" style="font-size:11px;margin-top:2px">${bits.join(" · ")||"Sincroniza para traer tus datos"}</div></div>
+      <button class="pillbtn ghost" style="flex:none;padding:8px 12px" onclick="syncWhoop()">Actualizar</button></div>`;
+  }
+  return `<button class="pillbtn primary" style="width:100%;margin-top:2px;display:flex;align-items:center;justify-content:center;gap:8px" onclick="connectWhoop()">${ic('watch',18)} Conectar WHOOP</button>
+    <div class="dim" style="font-size:12px;text-align:center;margin-top:8px">Autoriza una vez y tu recovery, energía y calorías entran solos.</div>`;
 }
 function setRec(k,v){getDay().rec[k]=v===""?null:+v;save();if(k==="recovery")render();}
 
@@ -730,6 +775,7 @@ function importData(inp){const f=inp.files[0];if(!f)return;const r=new FileReade
 function openSheet(html){document.getElementById("sheet").innerHTML=html;document.getElementById("modal").classList.add("on");}
 function closeSheet(){document.getElementById("modal").classList.remove("on");}
 document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeSheet();});
+if(S.whoop&&S.whoop.on)setTimeout(()=>syncWhoop(true),400);
 
 render();
 
