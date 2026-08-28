@@ -91,8 +91,7 @@ textarea{resize:vertical;min-height:90px;line-height:1.5}
 .stage .halo{opacity:0;transform-origin:center;transform-box:fill-box}
 .stage .halo.on{animation:halo 2.6s ease-in-out infinite}
 @keyframes halo{0%,100%{opacity:0;transform:scale(.92)}50%{opacity:.5;transform:scale(1.12)}}
-.stage .core-num{font-family:"Bricolage Grotesque";font-weight:800;fill:#fff;text-anchor:middle;letter-spacing:-.02em;transform-box:fill-box;transform-origin:center;animation:breatheN 4.5s ease-in-out infinite}
-@keyframes breatheN{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+.stage .core-num{font-family:"Bricolage Grotesque";font-weight:800;fill:#fff;text-anchor:middle;letter-spacing:-.02em}
 .stage .core-cap{font-family:"JetBrains Mono";font-size:9px;letter-spacing:.22em;text-anchor:middle}
 .stage .flow{fill:none;stroke:url(#edge);stroke-width:2;stroke-linecap:round;stroke-dasharray:5 12;opacity:.9;animation:flowe 2.6s linear infinite}
 @keyframes flowe{to{stroke-dashoffset:-102}}
@@ -111,7 +110,7 @@ textarea{resize:vertical;min-height:90px;line-height:1.5}
 .hstats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px}
 .hstat{border:1px solid var(--line);border-radius:14px;padding:11px 5px 10px;background:rgba(255,255,255,.02);display:flex;flex-direction:column;align-items:center;gap:3px}
 .hstat.tap{cursor:pointer}
-.hstat .sk{font-family:"JetBrains Mono";font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.hstat .sk{font-family:"JetBrains Mono";font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--mid)}
 .hstat .sv{font-family:"Bricolage Grotesque";font-weight:800;font-size:19px;line-height:1}
 .hstat .sv small{font-size:10px;color:var(--dim);font-weight:600}
 
