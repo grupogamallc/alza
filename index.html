@@ -139,6 +139,25 @@ textarea{resize:vertical;min-height:90px;line-height:1.5}
 .foodrow .nm{flex:1;font-size:15px}
 .foodrow .mc{font-family:"JetBrains Mono";font-size:11px;color:var(--dim)}
 .foodrow .kc{font-family:"Bricolage Grotesque";font-weight:800;font-size:15px}
+/* Nutrición estilo diario */
+.rem{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.rem .big{font-family:"Bricolage Grotesque";font-weight:800;font-size:34px;line-height:1;letter-spacing:-.02em}
+.rem .lab{font-family:"JetBrains Mono";font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-top:4px}
+.krow{display:flex;justify-content:space-between;gap:8px;margin-top:12px;font-family:"JetBrains Mono";font-size:11px}
+.krow .c{flex:1;text-align:center}.krow .c .n{font-family:"Bricolage Grotesque";font-weight:800;font-size:16px;color:var(--tx)}.krow .c .k{color:var(--dim);font-size:9px;letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
+.krow .op{color:var(--dim);align-self:center;font-size:16px}
+.mmini{display:flex;gap:8px;margin-top:14px}
+.mmini .m{flex:1;text-align:center}
+.mmini .m .ring{margin:0 auto 5px}
+.mmini .m .g{font-family:"JetBrains Mono";font-size:11px;color:var(--mid)}
+.mmini .m .t{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em}
+.mealhead{display:flex;align-items:center;justify-content:space-between;margin:18px 0 2px;padding:0 2px}
+.mealhead .nm{font-family:"Bricolage Grotesque";font-weight:800;font-size:16px}
+.mealhead .kc{font-family:"JetBrains Mono";font-size:12px;color:var(--mid)}
+.addfood{width:100%;margin-top:8px;border:1px dashed var(--line2);border-radius:12px;padding:11px;color:var(--cuerpo);background:rgba(67,214,160,.05);font-family:"JetBrains Mono";font-size:12.5px;letter-spacing:.03em;display:flex;align-items:center;justify-content:center;gap:7px}
+.addfood:active{transform:scale(.99)}
+.foodrow.tap{cursor:pointer}
+.foodrow .meal-empty{color:var(--dim);font-size:13px;padding:9px 0;border-top:1px solid var(--line)}
 .scanwrap{position:fixed;inset:0;background:#000;z-index:100;display:none;flex-direction:column}
 .scanwrap.on{display:flex}
 .scanwrap video{width:100%;height:100%;object-fit:cover}
@@ -544,30 +563,59 @@ function intentionModule(){const d=getDay();
 function saveIntention(v){getDay().intention=v;save();}
 
 /* ---- CUERPO: macros ---- */
+const MEALS=[["des","Desayuno"],["com","Comida"],["cen","Cena"],["snk","Snacks"]];
+let _meal="des",_emeal="snk";
+function mealName(k){const m=MEALS.find(x=>x[0]===k);return m?m[1]:"Snacks";}
 function macrosModule(){
   const t=todayFoodTotals();const g=S.goals;const d=getDay();
-  const macro=(lbl,val,goal,col)=>`<div class="macrobar"><div class="r"><span>${lbl}</span><span class="tnum">${Math.round(val)} / ${goal}g</span></div><div class="bar"><i style="width:${Math.min(100,val/goal*100)}%;background:${col}"></i></div></div>`;
-  const scanBtn=`<button class="pillbtn ghost" style="flex:1" onclick="startScan()">${ic('scan',18)} Escanear</button>`;
-  return `<div class="sec-title" style="color:var(--cuerpo)">Nutrición · macros</div>
+  const rem=Math.round(g.kcal-t.kc);const over=rem<0;const remCol=over?"var(--coral)":"var(--cuerpo)";
+  const mring=(lbl,val,goal,col)=>`<div class="m"><div class="ring" style="${ringStyle(Math.min(1,val/(goal||1)),col,64)}"><div class="in"><div class="tnum" style="font-size:13px;font-weight:800">${Math.round(val)}</div></div></div><div class="g">/ ${goal}g</div><div class="t" style="color:${col}">${lbl}</div></div>`;
+  let meals="";
+  MEALS.forEach(([mk,mn])=>{
+    const items=d.foods.map((f,i)=>({f,i})).filter(x=>(x.f.m||"snk")===mk);
+    const sub=items.reduce((a,x)=>a+x.f.kc*x.f.q,0);
+    meals+=`<div class="mealhead"><div class="nm">${mn}</div><div class="kc">${Math.round(sub)} kcal</div></div>
+      <div class="card" style="margin-top:6px;padding-top:${items.length?"2px":"14px"}">
+      ${items.map(x=>foodRow(x.f,x.i)).join("")}
+      <button class="addfood" onclick="addToMeal('${mk}')">${ic('search',15)} Agregar alimento</button></div>`;
+  });
+  return `<div class="sec-title" style="color:var(--cuerpo)">Nutrición · hoy</div>
   <div class="card">
-    <div class="row" style="margin-bottom:14px">
-      <div class="ring" style="${ringStyle(Math.min(1,t.kc/g.kcal),'var(--cuerpo)',104)}"><div class="in"><div class="big tnum" style="font-size:23px">${Math.round(t.kc)}</div><div class="mono" style="font-size:9px;color:var(--mid)">/ ${g.kcal} KCAL</div></div></div>
-      <div style="flex:1;margin-left:16px">${macro("Proteína",t.p,g.p,"var(--coral)")}${macro("Carbos",t.c,g.c,"var(--teal)")}${macro("Grasas",t.f,g.f,"var(--gold)")}</div>
+    <div class="rem">
+      <div style="text-align:center"><div class="big" style="color:${remCol}">${over?"−"+(-rem):rem}</div><div class="lab">${over?"Te pasaste (kcal)":"Restantes (kcal)"}</div></div>
+      <div style="flex:1"><div class="krow"><div class="c"><div class="n">${g.kcal}</div><div class="k">Meta</div></div><div class="op">−</div><div class="c"><div class="n">${Math.round(t.kc)}</div><div class="k">Comida</div></div><div class="op">=</div><div class="c"><div class="n" style="color:${remCol}">${rem}</div><div class="k">Quedan</div></div></div></div>
     </div>
-    <button class="pillbtn primary" style="width:100%" onclick="searchFoodSheet()">${ic('search',18)} Buscar en el banco de comida</button>
-    <div style="display:flex;gap:9px;margin-top:9px">${scanBtn}<button class="pillbtn ghost" style="flex:1" onclick="addFoodSheet()">+ Manual</button></div>
+    <div class="mmini">${mring("Prot",t.p,g.p,"var(--coral)")}${mring("Carbos",t.c,g.c,"var(--teal)")}${mring("Grasas",t.f,g.f,"var(--gold)")}</div>
   </div>
-  <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin:0 -16px;padding-left:16px;padding-right:16px">
-   ${S.foodDB.slice(0,14).map(f=>`<button class="chip" onclick="quickAdd(${S.foodDB.indexOf(f)})">${esc(f.n.replace(/\(.*\)/,'').trim())} · ${f.kc}</button>`).join("")}</div>
-  <div class="card" style="margin-top:10px">
-   ${d.foods.length?d.foods.map((f,i)=>`<div class="foodrow"><div class="nm">${esc(f.n)}${f.q>1?` <span class="mc">×${f.q}</span>`:""}<div class="mc">P ${Math.round(f.p*f.q)} · C ${Math.round(f.c*f.q)} · G ${Math.round(f.f*f.q)}</div></div><div class="kc tnum">${Math.round(f.kc*f.q)}</div><button class="del" onclick="delFood(${i})" style="color:var(--dim);font-size:20px;width:30px">×</button></div>`).join(""):`<div class="empty">Aún no registras comida hoy.</div>`}
-  </div>`;
+  ${meals}`;
 }
-function quickAdd(i){const f=S.foodDB[i];getDay().foods.push({n:f.n,kc:f.kc,p:f.p,c:f.c,f:f.f,q:1});render();toast(f.n.replace(/\(.*\)/,'').trim()+" +");}
-function delFood(i){getDay().foods.splice(i,1);render();}
+function foodRow(f,i){return `<div class="foodrow tap" onclick="editFood(${i})"><div class="nm">${esc(f.n)}${f.q>1?` <span class="mc">×${f.q}</span>`:""}<div class="mc">P ${Math.round(f.p*f.q)} · C ${Math.round(f.c*f.q)} · G ${Math.round(f.f*f.q)}</div></div><div class="kc tnum">${Math.round(f.kc*f.q)}</div><button class="del" onclick="event.stopPropagation();delFood(${i})" style="color:var(--dim);font-size:20px;width:30px">×</button></div>`;}
+function addToMeal(m){_meal=m;addSheet();}
+function addSheet(){
+  _offList=[];const recents=S.foodDB.slice(0,12);
+  openSheet(`<h3>Agregar a ${mealName(_meal)}</h3>
+   <div class="field" style="margin-bottom:9px"><input id="foodq" placeholder="Buscar: pollo, avena, yogur…" autocomplete="off" oninput="offSearchDeb(this.value)"></div>
+   <div style="display:flex;gap:8px;margin-bottom:12px">
+     <button class="pillbtn ghost" style="flex:1" onclick="startScan()">${ic('scan',16)} Escanear</button>
+     <button class="pillbtn ghost" style="flex:1" onclick="addFoodSheet()">+ Manual</button></div>
+   <div id="offhint" class="mono dim" style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">Recientes</div>
+   <div id="offres">${recents.length?recents.map(f=>`<div class="foodrow tap" onclick="quickAdd(${S.foodDB.indexOf(f)})"><div class="nm">${esc(f.n.replace(/\\(.*\\)/,'').trim())}<div class="mc">${Math.round(f.kc)} kcal · P ${r1(f.p)} · C ${r1(f.c)} · G ${r1(f.f)}</div></div><div class="kc tnum" style="color:var(--cuerpo)">+</div></div>`).join(''):'<div class="dim" style="font-size:13px">Busca arriba o escanea un código para empezar.</div>'}</div>`);
+  setTimeout(()=>{const e=document.getElementById('foodq');if(e)e.focus();},120);
+}
+function quickAdd(i){const f=S.foodDB[i];getDay().foods.push({n:f.n,kc:f.kc,p:f.p,c:f.c,f:f.f,q:1,m:_meal});closeSheet();render();toast("Agregado a "+mealName(_meal));}
+function delFood(i){getDay().foods.splice(i,1);save();render();}
+function editFood(i){const f=getDay().foods[i];if(!f)return;_emeal=f.m||"snk";
+  openSheet(`<h3>${esc(f.n)}</h3>
+   <div class="mono dim" style="font-size:11px;margin-bottom:12px">Por porción: ${Math.round(f.kc)} kcal · P ${r1(f.p)} · C ${r1(f.c)} · G ${r1(f.f)}</div>
+   <div class="field"><label>Porciones</label><input id="efq" type="number" inputmode="decimal" value="${f.q}"></div>
+   <div class="field"><label>Comida</label><div class="seg" id="efm">${MEALS.map(([k,n])=>`<button class="${(f.m||'snk')===k?'on':''}" onclick="_emeal='${k}';document.querySelectorAll('#efm button').forEach(b=>b.classList.remove('on'));this.classList.add('on')">${n}</button>`).join('')}</div></div>
+   <button class="pillbtn primary" style="width:100%" onclick="saveEdit(${i})">Guardar</button>
+   <button class="pillbtn ghost" style="width:100%;margin-top:8px;color:var(--coral)" onclick="delFood(${i});closeSheet()">Eliminar</button>`);
+}
+function saveEdit(i){const f=getDay().foods[i];if(!f)return;f.q=+document.getElementById('efq').value||1;f.m=_emeal;save();closeSheet();render();toast("Actualizado");}
 function addFoodSheet(code){
   const known=code?S.foodDB.find(f=>f.bc===code):null;
-  openSheet(`<h3>${code?"Producto escaneado":"Agregar comida"}</h3>
+  openSheet(`<h3>${code?"Producto escaneado":"Agregar a "+mealName(_meal)}</h3>
    ${code?`<div class="mono dim" style="font-size:11px;margin-bottom:10px">Código: ${esc(code)}${known?" · guardado ✓":" · nuevo"}</div>`:""}
    <div class="field"><label>Nombre</label><input id="fn" placeholder="Ej. Barra de proteína" value="${known?esc(known.n):""}"></div>
    <div class="g4">
@@ -576,11 +624,11 @@ function addFoodSheet(code){
      <div class="field"><label>Carb</label><input id="fc" type="number" inputmode="numeric" value="${known?known.c:""}"></div>
      <div class="field"><label>Grasa</label><input id="ff" type="number" inputmode="numeric" value="${known?known.f:""}"></div></div>
    <div class="field"><label>Porciones</label><input id="fq" type="number" inputmode="decimal" value="1"></div>
-   <button class="pillbtn primary" style="width:100%" onclick="saveFood('${code||""}')">Agregar al día</button>
+   <button class="pillbtn primary" style="width:100%" onclick="saveFood('${code||""}')">Agregar a ${mealName(_meal)}</button>
    <button class="pillbtn ghost" style="width:100%;margin-top:8px" onclick="saveFoodToDB('${code||""}')">Guardar en mis alimentos + agregar</button>`);
 }
-function readFood(){return{n:document.getElementById("fn").value.trim(),kc:+document.getElementById("fk").value||0,p:+document.getElementById("fp").value||0,c:+document.getElementById("fc").value||0,f:+document.getElementById("ff").value||0,q:+document.getElementById("fq").value||1};}
-function saveFood(){const f=readFood();if(!f.n)return toast("Ponle nombre");getDay().foods.push(f);closeSheet();render();toast("Agregado");}
+function readFood(){return{n:document.getElementById("fn").value.trim(),kc:+document.getElementById("fk").value||0,p:+document.getElementById("fp").value||0,c:+document.getElementById("fc").value||0,f:+document.getElementById("ff").value||0,q:+document.getElementById("fq").value||1,m:_meal};}
+function saveFood(){const f=readFood();if(!f.n)return toast("Ponle nombre");getDay().foods.push(f);closeSheet();render();toast("Agregado a "+mealName(_meal));}
 function saveFoodToDB(code){const f=readFood();if(!f.n)return toast("Ponle nombre");const e={n:f.n,kc:f.kc,p:f.p,c:f.c,f:f.f};if(code)e.bc=code;S.foodDB.unshift(e);getDay().foods.push(f);closeSheet();render();toast("Guardado");}
 
 /* ---- Open Food Facts: banco de comida + lookup por barcode ---- */
@@ -620,9 +668,9 @@ function offPick(i){_offSel=i;const f=_offList[i];if(!f)return;
 }
 function offCalc(){const f=_offList[_offSel];if(!f)return;const g=+document.getElementById('offg').value||0;const m=g/100;const el=document.getElementById('offcalc');if(el)el.innerHTML=`<div class="row"><span class="dim" style="font-size:13px">${g} g</span><span style="font-family:'Bricolage Grotesque';font-weight:800;font-size:20px">${Math.round(f.kc*m)} kcal</span></div><div class="mono dim" style="font-size:12px;margin-top:5px">Proteína ${r1(f.p*m)}g · Carbos ${r1(f.c*m)}g · Grasas ${r1(f.f*m)}g</div>`;}
 function offAdd(){const f=_offList[_offSel];if(!f)return;const g=+document.getElementById('offg').value||100;const m=g/100;
-  getDay().foods.push({n:f.n+' ('+g+'g)',kc:f.kc*m,p:f.p*m,c:f.c*m,f:f.f*m,q:1});
+  getDay().foods.push({n:f.n+' ('+g+'g)',kc:f.kc*m,p:f.p*m,c:f.c*m,f:f.f*m,q:1,m:_meal});
   if(f.code&&!S.foodDB.find(x=>x.bc===f.code))S.foodDB.unshift({n:f.n,kc:f.kc,p:f.p,c:f.c,f:f.f,bc:f.code});
-  closeSheet();render();toast("Agregado");}
+  closeSheet();render();toast("Agregado a "+mealName(_meal));}
 async function lookupBarcode(code){
   const known=S.foodDB.find(f=>f.bc===code);if(known){addFoodSheet(code);return;}
   toast("Buscando producto…");
