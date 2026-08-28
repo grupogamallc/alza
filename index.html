@@ -91,8 +91,19 @@ textarea{resize:vertical;min-height:90px;line-height:1.5}
 .stage .halo{opacity:0;transform-origin:center;transform-box:fill-box}
 .stage .halo.on{animation:halo 2.6s ease-in-out infinite}
 @keyframes halo{0%,100%{opacity:0;transform:scale(.92)}50%{opacity:.5;transform:scale(1.12)}}
-.stage .core-num{font-family:"Bricolage Grotesque";font-weight:800;fill:#fff;text-anchor:middle;letter-spacing:-.02em}
+.stage .core-num{font-family:"Bricolage Grotesque";font-weight:800;fill:#fff;text-anchor:middle;letter-spacing:-.02em;transform-box:fill-box;transform-origin:center;animation:breatheN 4.5s ease-in-out infinite}
+@keyframes breatheN{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
 .stage .core-cap{font-family:"JetBrains Mono";font-size:9px;letter-spacing:.22em;text-anchor:middle}
+.stage .flow{fill:none;stroke:url(#edge);stroke-width:2;stroke-linecap:round;stroke-dasharray:5 12;opacity:.9;animation:flowe 2.6s linear infinite}
+@keyframes flowe{to{stroke-dashoffset:-102}}
+.stage .spin{transform-box:fill-box;transform-origin:center;animation:spinh 15s linear infinite}
+@keyframes spinh{to{transform:rotate(360deg)}}
+.stage .flare{opacity:0;transform-box:fill-box;transform-origin:center}
+.stage .flare.on{animation:flarep 2.4s ease-out infinite}
+@keyframes flarep{0%{opacity:0;transform:scale(.5)}22%{opacity:.5}100%{opacity:0;transform:scale(1.75)}}
+.p-hero .embers{position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none}
+.p-hero .ember{position:absolute;bottom:6%;width:5px;height:5px;border-radius:50%;filter:blur(.6px);opacity:0;animation:rise linear infinite}
+@keyframes rise{0%{transform:translateY(0) scale(.5);opacity:0}14%{opacity:.6}82%{opacity:.26}100%{transform:translateY(-300px) scale(1);opacity:0}}
 .stage .n-lab{font-family:"Bricolage Grotesque";font-weight:800;text-anchor:middle;letter-spacing:.01em}
 .stage .n-pct{font-family:"JetBrains Mono";font-weight:500;text-anchor:middle;fill:var(--mid)}
 
@@ -419,7 +430,7 @@ function vPanel(){
   const recStr=rec.recovery!=null?`<span data-count="${rec.recovery}">0</span><small>%</small>`:'<small>—</small>';
   return `
   <div class="p-hero">
-    <div class="aurora"></div><div class="aurora b"></div><div class="grain"></div>
+    <div class="aurora"></div><div class="aurora b"></div><div class="grain"></div><div class="embers" id="embers"></div>
     <div class="eye">${new Date().toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'})}</div>
     <div class="greet">${greetWord()}, ${esc(S.profile.name)} <span class="sun">${ic('sunrise',22)}</span></div>
     <div class="sub">Tu equilibrio de hoy</div>
@@ -449,7 +460,7 @@ function stage(){
     const off=(C*(1-pct)).toFixed(2);
     const labY=isTop?n.cy-52:n.cy+58, pctY=isTop?n.cy-37:n.cy+73;
     nodes+=`<g>
-      <circle class="halo${k===top?' on':''}" cx="${n.cx}" cy="${n.cy}" r="30" fill="${P.color}" filter="url(#soft)"/>
+      <circle class="halo${(pct>=0.999||k===top)?' on':''}" cx="${n.cx}" cy="${n.cy}" r="30" fill="${P.color}" filter="url(#soft)"/>
       <circle class="track" cx="${n.cx}" cy="${n.cy}" r="${R}"/>
       <circle class="pr" data-off="${off}" cx="${n.cx}" cy="${n.cy}" r="${R}" stroke="${P.color}" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}"/>
       <circle class="disc" cx="${n.cx}" cy="${n.cy}" r="${R-7}"/>
@@ -465,10 +476,15 @@ function stage(){
      <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7B5CFF"/><stop offset=".5" stop-color="#43D6A0"/><stop offset="1" stop-color="#FFC15E"/></linearGradient>
      <radialGradient id="triG" cx="50%" cy="60%" r="65%"><stop offset="0" stop-color="#FFC15E" stop-opacity=".22"/><stop offset=".55" stop-color="#43D6A0" stop-opacity=".12"/><stop offset="1" stop-color="#7B5CFF" stop-opacity=".06"/></radialGradient>
      <radialGradient id="coreG" cx="50%" cy="42%" r="70%"><stop offset="0" stop-color="#1A1A28"/><stop offset="1" stop-color="#0B0B12"/></radialGradient>
+     <radialGradient id="flareG" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FFC15E" stop-opacity=".5"/><stop offset="70%" stop-color="#FFC15E" stop-opacity=".12"/><stop offset="100%" stop-color="#FFC15E" stop-opacity="0"/></radialGradient>
      <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3"/></filter>
+     <filter id="soft2" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="2.2"/></filter>
     </defs>
+    <circle id="triFlare" class="flare" cx="180" cy="182" r="70" fill="url(#flareG)"/>
     <polygon id="triFill" class="tri-fill" data-op="${triOp}" points="180,74 76,240 284,240" fill="url(#triG)" opacity="0"/>
-    <polygon points="180,74 76,240 284,240" fill="none" stroke="url(#edge)" stroke-width="1.4" stroke-dasharray="3 7" stroke-linejoin="round" opacity=".5"/>
+    <polygon points="180,74 76,240 284,240" fill="none" stroke="url(#edge)" stroke-width="1.2" stroke-dasharray="3 7" stroke-linejoin="round" opacity=".28"/>
+    <polygon class="flow" points="180,74 76,240 284,240"/>
+    <g class="spin"><circle cx="180" cy="182" r="58" fill="none" stroke="url(#edge)" stroke-width="2.4" stroke-dasharray="72 250" stroke-opacity=".5" filter="url(#soft2)"/></g>
     <circle cx="180" cy="182" r="47" fill="url(#coreG)" stroke="rgba(255,255,255,.08)"/>
     <circle cx="180" cy="182" r="47" fill="none" stroke="url(#edge)" stroke-opacity=".28" stroke-width="1.2"/>
     <text id="coreNum" class="core-num" data-ov="${ov}" x="180" y="186" font-size="40">0<tspan font-size="18" dy="-14">%</tspan></text>
@@ -485,7 +501,9 @@ function animatePanel(){
   });
   const tf=document.getElementById("triFill");if(tf){tf.style.opacity=0;requestAnimationFrame(()=>{setTimeout(()=>tf.style.opacity=tf.dataset.op,220);});}
   svg.querySelectorAll("[data-pct]").forEach((el,i)=>{setTimeout(()=>cUp(el,+el.dataset.pct,900,v=>v+"%"),180+i*140);});
-  const cn=document.getElementById("coreNum");if(cn)setTimeout(()=>cCore(cn,+cn.dataset.ov,1200),240);
+  const cn=document.getElementById("coreNum");if(cn){const ov=+cn.dataset.ov;setTimeout(()=>cCore(cn,ov,1200),240);
+    const fl=document.getElementById("triFlare");if(fl){fl.classList.remove("on");if(ov>=100)setTimeout(()=>fl.classList.add("on"),1200);}}
+  const eb=document.getElementById("embers");if(eb&&!eb.childElementCount){const cols=["#7B5CFF","#43D6A0","#FFC15E"];let h="";for(let i=0;i<9;i++){const l=(6+Math.random()*88).toFixed(1);const c=cols[i%3];const du=(6+Math.random()*7).toFixed(1);const dl=(-Math.random()*10).toFixed(1);h+=`<span class="ember" style="left:${l}%;background:${c};box-shadow:0 0 7px ${c};animation-duration:${du}s;animation-delay:${dl}s"></span>`;}eb.innerHTML=h;}
   document.querySelectorAll(".hstat [data-count]").forEach((el,i)=>{setTimeout(()=>cUp(el,+el.dataset.count,900,v=>v.toLocaleString('es-MX')),320+i*80);});
 }
 function cUp(el,to,dur,fmt){fmt=fmt||(v=>v);to=to||0;const t0=performance.now();(function s(t){const p=Math.min(1,(t-t0)/dur);const e=1-Math.pow(1-p,3);el.textContent=fmt(Math.round(e*to));if(p<1)requestAnimationFrame(s);})(t0);}
