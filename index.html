@@ -16,7 +16,7 @@
 :root{
   --ink:#08080D;--ink2:#0E0E16;--surface:#14141F;--surface2:#1C1C2A;
   --line:rgba(255,255,255,.09);--line2:rgba(255,255,255,.16);
-  --tx:#F4F1E8;--mid:#ADA9BE;--dim:#726F84;
+  --tx:#F3F5F8;--mid:#C6C9D2;--dim:#8C90A0;
   --gold:#FFC15E;--golds:#F2C57C;--amber:#F2954B;--magenta:#C2447E;--indigo:#5B49C9;
   --green:#43D6A0;--coral:#FF6B6B;--teal:#2FD1C6;
   --mente:#7B5CFF;--cuerpo:#43D6A0;--alma:#FFC15E;
@@ -191,12 +191,13 @@ textarea{resize:vertical;min-height:90px;line-height:1.5}
 .vplayer .yt{display:block;text-align:center;margin-top:14px;color:var(--dim);font-family:"JetBrains Mono";font-size:11px;text-decoration:underline}
 
 .nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;display:flex;justify-content:space-around;padding:9px 6px calc(9px + env(safe-area-inset-bottom));background:rgba(10,10,16,.86);backdrop-filter:blur(14px);border-top:1px solid var(--line);z-index:40}
-.nav button{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--dim);font-size:10px;font-family:"JetBrains Mono";letter-spacing:.03em;padding:4px 8px;flex:1}
+.nav button{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--dim);font-size:10px;font-family:"JetBrains Mono";letter-spacing:.03em;padding:4px 8px;flex:1;opacity:.62;transition:opacity .2s}
 .nav button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.7}
-.nav button.on{color:var(--gold)}
-.nav button.on.mente{color:var(--mente)}
-.nav button.on.cuerpo{color:var(--cuerpo)}
-.nav button.on.alma{color:var(--alma)}
+.nav button.panel{color:var(--tx)}
+.nav button.mente{color:var(--mente)}
+.nav button.cuerpo{color:var(--cuerpo)}
+.nav button.alma{color:var(--alma)}
+.nav button.on{opacity:1;font-weight:700}
 
 .sec-title{font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);font-family:"JetBrains Mono";margin:18px 2px 10px;display:flex;align-items:center;gap:8px}
 .sec-title::before{content:"";width:16px;height:2px;border-radius:2px;background:currentColor;opacity:.5}
@@ -418,7 +419,7 @@ function bar(){
 }
 function nav(){
   const items=[["panel","Panel","dash"],["mente","Mente","mind"],["cuerpo","Cuerpo","body"],["alma","Alma","spirit"]];
-  return `<div class="nav">${items.map(([id,l,icn])=>`<button class="${S.ui.tab===id?'on '+id:''}" onclick="go('${id}')">${ic(icn,22,1.7)}${l}</button>`).join("")}</div>`;
+  return `<div class="nav">${items.map(([id,l,icn])=>`<button class="${id}${S.ui.tab===id?' on':''}" onclick="go('${id}')">${ic(icn,22,1.7)}${l}</button>`).join("")}</div>`;
 }
 function go(t){S.ui.tab=t;render();window.scrollTo(0,0);}
 
