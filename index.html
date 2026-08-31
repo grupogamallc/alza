@@ -187,6 +187,19 @@ textarea{resize:vertical;min-height:90px;line-height:1.5}
 .addfood:active{transform:scale(.99)}
 .foodrow.tap{cursor:pointer}
 .foodrow .meal-empty{color:var(--dim);font-size:13px;padding:9px 0;border-top:1px solid var(--line)}
+/* InBody · composición */
+.inbody{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ibx{border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,var(--surface),var(--ink2));padding:13px 10px 12px;text-align:center;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.ibx:active{transform:scale(.99)}
+.ibx .ibl{font-size:12px;color:var(--mid);font-weight:600;line-height:1.15;min-height:30px;display:flex;align-items:center;justify-content:center}
+.ibx .ibl small{color:var(--dim);font-weight:600}
+.ibx .ibv{font-family:"Bricolage Grotesque";font-weight:800;font-size:31px;letter-spacing:-.02em;line-height:1;margin:5px 0 10px;color:var(--tx)}
+.ibx .ibv small{font-size:17px;color:var(--dim);font-weight:800}
+.ibx .ibd{display:inline-flex;align-items:center;gap:4px;font-family:"JetBrains Mono";font-size:11px;font-weight:700;padding:5px 12px;border-radius:999px;letter-spacing:.02em}
+.ibx .ibd.good{background:#2FB985;color:#04271A}
+.ibx .ibd.bad{background:#E5586B;color:#fff}
+.ibx .ibd.same{background:var(--surface2);color:var(--mid);border:1px solid var(--line)}
+.ibx .ibp{font-size:10px;color:var(--dim);margin-top:7px;font-family:"JetBrains Mono";letter-spacing:.03em}
 .scanwrap{position:fixed;inset:0;background:#000;z-index:100;display:none;flex-direction:column}
 .scanwrap.on{display:flex}
 .scanwrap video{width:100%;height:100%;object-fit:cover}
@@ -327,6 +340,13 @@ const PILLARS={
  cuerpo:{name:"Cuerpo",color:"#43D6A0",icon:"body",sub:"Nutrición, energía y descanso",cats:["Entrenamiento","Salud"]},
  alma:{name:"Alma",color:"#FFC15E",icon:"spirit",sub:"Fe, calma y propósito",cats:["Fe","Meditación"]}
 };
+/* InBody · métricas de composición (dir = dirección que cuenta como MEJORA) */
+const INBODY=[
+ {k:"weight",lbl:"Weight",unit:"lb",dir:"down"},
+ {k:"smm",lbl:"Skeletal Muscle",unit:"lb",dir:"up"},
+ {k:"pbf",lbl:"Body Fat",unit:"%",dir:"down"},
+ {k:"vfat",lbl:"Visceral Fat",unit:"",dir:"down"}
+];
 
 /* ============ STATE ============ */
 const KEY="alza_v2";
@@ -337,10 +357,13 @@ const DEFAULT={
   foodDB:JSON.parse(JSON.stringify(SEED_FOODS)),
   quotes:JSON.parse(JSON.stringify(SEED_QUOTES)),
   verses:JSON.parse(JSON.stringify(SEED_VERSES)),
-  videos:[],days:{},whoop:{on:false,last:null},ui:{tab:"panel"}
+  videos:[],days:{},whoop:{on:false,last:null},
+  inbody:{weight:{c:275.4,p:null},smm:{c:114.6,p:null},pbf:{c:27.1,p:null},vfat:{c:null,p:null}},
+  ui:{tab:"panel"}
 };
 let S=load();
 if(!S.whoop)S.whoop={on:false,last:null};
+if(!S.inbody)S.inbody={weight:{c:275.4,p:null},smm:{c:114.6,p:null},pbf:{c:27.1,p:null},vfat:{c:null,p:null}};
 /* ===== WHOOP ===== */
 const WHOOP_BASE="https://wgkwfctbwiwoaycbtuia.supabase.co/functions/v1";
 const WHOOP_KEY="83da7afab473474bb0e8bddacfe7824b";
@@ -553,7 +576,7 @@ function vPillar(p){
   const P=PILLARS[p];const pct=pillarPct(p);
   let modules="";
   if(p==="mente"){modules=habitBlock(p)+quoteModule()+journalModule()+videoModule(p);}
-  if(p==="cuerpo"){modules=habitBlock(p)+recoveryModule()+macrosModule()+videoModule(p);}
+  if(p==="cuerpo"){modules=habitBlock(p)+recoveryModule()+inbodyModule()+macrosModule()+videoModule(p);}
   if(p==="alma"){modules=habitBlock(p)+verseModule()+intentionModule()+videoModule(p);}
   return `
   <div class="ph" style="--p:${pct}">
@@ -789,6 +812,44 @@ function whoopCard(){
     <div class="dim" style="font-size:12px;text-align:center;margin-top:8px">Autoriza una vez y tu recovery, energía y calorías entran solos.</div>`;
 }
 function setRec(k,v){getDay().rec[k]=v===""?null:+v;save();if(k==="recovery")render();}
+
+/* ---- CUERPO: InBody (composición corporal, valores manuales) ---- */
+function ibVal(v){if(v==null)return '<span style="color:var(--dim);font-weight:800">—</span>';const s=(''+v).split('.');return s[0]+(s[1]?`<small>.${s[1]}</small>`:'');}
+function inbodyModule(){
+  const ib=S.inbody||{};
+  const cell=(m)=>{
+    const o=ib[m.k]||{};const c=o.c!=null?o.c:null;const p=o.p!=null?o.p:null;
+    let pill='';
+    if(c!=null&&p!=null){
+      const d=+(c-p).toFixed(2);const u=m.unit?(' '+m.unit):'';
+      if(Math.abs(d)<0.05){pill=`<span class="ibd same">Igual</span>`;}
+      else{const up=d>0;const good=(m.dir==="up")===up;pill=`<span class="ibd ${good?'good':'bad'}">${up?'▲':'▼'} ${Math.abs(d).toFixed(1)}${u}</span>`;}
+    }else if(c!=null){pill=`<span class="ibd same">Sin previo</span>`;}
+    const prev=p!=null?`<div class="ibp">Antes ${p}${m.unit?(' '+m.unit):''}</div>`:'';
+    return `<div class="ibx" onclick="openInbody()">
+      <div class="ibl">${m.lbl}${m.unit?` <small>(${m.unit})</small>`:''}</div>
+      <div class="ibv">${ibVal(c)}</div>
+      ${pill}${prev}</div>`;
+  };
+  return `<div class="sec-title" style="color:var(--cuerpo)">InBody · composición
+     <button onclick="event.stopPropagation();openInbody()" style="margin-left:auto;font-family:'JetBrains Mono';font-size:11px;color:var(--cuerpo);border:1px solid var(--line);border-radius:8px;padding:4px 11px;background:rgba(67,214,160,.06)">Editar</button></div>
+   <div class="inbody">${INBODY.map(cell).join('')}</div>`;
+}
+function openInbody(){
+  const ib=S.inbody||{};
+  openSheet(`<h3>InBody · valores</h3>
+   <div class="mono dim" style="font-size:11px;margin-bottom:14px;line-height:1.6">Pon el valor de tu último test y el anterior. El color muestra si <b style="color:#2FB985">mejoraste</b>, <b style="color:#E5586B">empeoraste</b> o quedaste igual. (Peso, grasa corporal y visceral: bajar es mejor · Músculo: subir es mejor.)</div>
+   ${INBODY.map(m=>{const o=ib[m.k]||{};return `<div style="margin-bottom:13px"><div style="font-size:13.5px;font-weight:600;margin-bottom:6px">${m.lbl}${m.unit?` (${m.unit})`:''}</div>
+     <div class="g2"><div class="field"><label>Actual</label><input id="ib_${m.k}_c" type="number" inputmode="decimal" value="${o.c!=null?o.c:''}" placeholder="—"></div>
+       <div class="field"><label>Anterior</label><input id="ib_${m.k}_p" type="number" inputmode="decimal" value="${o.p!=null?o.p:''}" placeholder="—"></div></div></div>`;}).join('')}
+   <button class="pillbtn primary" style="width:100%" onclick="saveInbody()">Guardar</button>`);
+}
+function saveInbody(){
+  if(!S.inbody)S.inbody={};
+  INBODY.forEach(m=>{const c=document.getElementById('ib_'+m.k+'_c').value;const p=document.getElementById('ib_'+m.k+'_p').value;
+    S.inbody[m.k]={c:c===''?null:+c,p:p===''?null:+p};});
+  save();closeSheet();render();toast("InBody actualizado");
+}
 
 /* ---- videos (por pilar) ---- */
 function videoModule(p){
