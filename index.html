@@ -11,16 +11,18 @@
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Fraunces:ital,opsz,wght@0,9..144,400;1,9..144,400;1,9..144,500&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
 <style>
 :root{
-  --ink:#08080D;--ink2:#0E0E16;--surface:#14141F;--surface2:#1C1C2A;
+  --ink:#08080D;--ink2:#0E0E16;--surface:#15151F;--surface2:#1C1C2A;
+  --glass:rgba(28,28,42,.55);
   --line:rgba(255,255,255,.09);--line2:rgba(255,255,255,.16);
-  --tx:#F3F5F8;--mid:#C6C9D2;--dim:#8C90A0;
+  --tx:#F5F6FA;--mid:#C6C9D2;--dim:#8C90A0;
   --gold:#FFC15E;--golds:#F2C57C;--amber:#F2954B;--magenta:#C2447E;--indigo:#5B49C9;
   --green:#43D6A0;--coral:#FF6B6B;--teal:#2FD1C6;
   --mente:#7B5CFF;--cuerpo:#43D6A0;--alma:#FFC15E;
   --sunh:linear-gradient(90deg,#7B5CFF,#43D6A0,#FFC15E);
+  --warm:linear-gradient(180deg,#FFCE7A,#F2954B);
   --r:16px;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -53,12 +55,14 @@ textarea{resize:vertical;min-height:90px;line-height:1.5}
 .ghost{border:1px solid var(--line2);color:var(--tx);background:var(--surface)}
 .chip{font-family:"JetBrains Mono",monospace;font-size:12px;padding:8px 11px;border:1px solid var(--line);border-radius:999px;color:var(--mid);background:var(--surface);white-space:nowrap}
 
-.quote{border:1px solid var(--line);border-radius:14px;padding:16px;background:linear-gradient(180deg,rgba(123,92,255,.09),rgba(20,20,31,.5));box-shadow:0 0 44px -24px var(--mente)}
-.quote .q{font-family:"Fraunces";font-style:italic;font-size:18px;line-height:1.45;color:#EFEBFF}
-.quote .att{font-family:"JetBrains Mono";font-size:11px;color:#B9A9FF;margin-top:10px;letter-spacing:.05em}
-.verse{border:1px solid var(--line);border-radius:14px;padding:16px;background:linear-gradient(180deg,rgba(255,193,94,.08),rgba(20,20,31,.5));box-shadow:0 0 44px -24px var(--gold)}
-.verse .q{font-family:"Fraunces";font-style:italic;font-size:16.5px;line-height:1.45;color:#FBEBD3}
-.verse b{color:var(--golds);font-family:"JetBrains Mono";font-size:11px;display:block;margin-top:8px;letter-spacing:.04em;font-weight:400}
+.quote{position:relative;border:1px solid var(--line);border-radius:18px;padding:22px 20px;background:linear-gradient(180deg,rgba(123,92,255,.12),rgba(18,18,28,.6));box-shadow:0 24px 50px -34px var(--mente),inset 0 1px 0 rgba(255,255,255,.05);backdrop-filter:blur(8px)}
+.quote::before{content:"\201C";position:absolute;top:2px;left:14px;font-family:"Fraunces";font-size:58px;color:var(--mente);opacity:.28;line-height:1}
+.quote .q{font-family:"Fraunces";font-style:italic;font-size:20px;line-height:1.42;color:#EFEBFF;position:relative}
+.quote .att{font-family:"JetBrains Mono";font-size:11px;color:#B9A9FF;margin-top:12px;letter-spacing:.05em}
+.verse{position:relative;border:1px solid rgba(255,193,94,.22);border-radius:18px;padding:22px 20px;background:linear-gradient(180deg,rgba(255,193,94,.11),rgba(18,18,28,.6));box-shadow:0 24px 50px -34px var(--gold),inset 0 1px 0 rgba(255,255,255,.05);backdrop-filter:blur(8px)}
+.verse::before{content:"\271D";position:absolute;top:16px;right:18px;font-size:20px;color:var(--gold);opacity:.4}
+.verse .q{font-family:"Fraunces";font-style:italic;font-size:18px;line-height:1.42;color:#FBEBD3}
+.verse b{color:var(--golds);font-family:"JetBrains Mono";font-size:11px;display:block;margin-top:10px;letter-spacing:.04em;font-weight:400}
 
 .statgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .mini{border:1px solid var(--line);border-radius:13px;padding:13px;background:var(--surface)}
@@ -80,6 +84,22 @@ textarea{resize:vertical;min-height:90px;line-height:1.5}
 .p-hero .greet{font-size:25px;margin-top:6px}
 .p-hero .greet .sun{display:inline-flex;vertical-align:-4px;margin-left:3px;color:var(--gold);filter:drop-shadow(0 0 10px rgba(255,193,94,.5))}
 .p-hero .sub{font-family:"Fraunces";font-style:italic;color:var(--golds);font-size:15px;margin-top:4px;opacity:.92}
+
+/* EDITORIAL GREETING BAND (v2 · estilo carta) */
+.greetband{position:relative;border-radius:24px;overflow:hidden;padding:26px 22px 24px;margin-bottom:12px;border:1px solid var(--line);background:linear-gradient(180deg,#141019,#0A0A10 72%);box-shadow:0 30px 60px -46px #000,inset 0 1px 0 rgba(255,255,255,.05)}
+.greetband .warmglow{position:absolute;inset:0;z-index:0;background:radial-gradient(90% 62% at 50% -14%,rgba(255,193,94,.34),rgba(242,149,75,.12) 40%,transparent 66%);animation:breathe 10s ease-in-out infinite}
+.greetband .warmglow.b{background:radial-gradient(70% 46% at 78% 0%,rgba(194,68,126,.20),transparent 60%);animation-duration:14s;animation-direction:alternate-reverse;filter:blur(4px)}
+.greetband>*{position:relative;z-index:2}
+.greetband .day{font-family:"JetBrains Mono";font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--golds);opacity:.85}
+.greetband .hi{font-family:"Fraunces";font-weight:500;font-size:33px;line-height:1.08;letter-spacing:-.01em;color:#FBF3E7;margin-top:9px}
+.greetband .hi .nm{font-style:italic;color:var(--gold)}
+.greetband .hi .sun{display:inline-flex;vertical-align:-6px;margin-left:4px;color:var(--gold);filter:drop-shadow(0 0 12px rgba(255,193,94,.6))}
+.greetband .line{font-family:"Fraunces";font-style:italic;font-size:15.5px;color:var(--golds);margin-top:8px;opacity:.9}
+.greetband .wake{display:inline-flex;align-items:center;gap:9px;margin-top:16px;padding:9px 14px;border-radius:13px;border:1px solid rgba(255,193,94,.28);background:rgba(255,193,94,.07)}
+.greetband .wake .wk{font-family:"JetBrains Mono";font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.greetband .wake .wv{font-family:"Bricolage Grotesque";font-weight:800;font-size:19px;line-height:1;color:#FBF3E7}
+.greetband .wake .wv small{font-size:11px;color:var(--dim);font-weight:600;margin-left:2px}
+.greetband .wake .ico{color:var(--gold);display:inline-flex}
 
 /* STAGE (triangulo Mente/Cuerpo/Alma) */
 .stage{position:relative;width:100%;max-width:352px;margin:8px auto 2px}
@@ -115,7 +135,7 @@ textarea{resize:vertical;min-height:90px;line-height:1.5}
 .hstat .sv small{font-size:10px;color:var(--dim);font-weight:600}
 
 /* pillar hero (sub pages) */
-.ph{position:relative;border-radius:20px;overflow:hidden;padding:18px;margin-bottom:14px;border:1px solid var(--line)}
+.ph{position:relative;border-radius:22px;overflow:hidden;padding:20px 18px;margin-bottom:14px;border:1px solid var(--line);box-shadow:0 26px 54px -42px #000,inset 0 1px 0 rgba(255,255,255,.05)}
 .ph .fill{position:absolute;inset:0;transition:opacity 1.1s;mask-image:linear-gradient(0deg,#000,#000 calc(var(--p,0)*100%),transparent calc(var(--p,0)*100% + 5%));-webkit-mask-image:linear-gradient(0deg,#000,#000 calc(var(--p,0)*100%),transparent calc(var(--p,0)*100% + 5%))}
 .ph>*{position:relative;z-index:2}
 .ph .em{font-size:30px}
@@ -151,7 +171,7 @@ textarea{resize:vertical;min-height:90px;line-height:1.5}
 .foodrow .kc{font-family:"Bricolage Grotesque";font-weight:800;font-size:15px}
 /* Nutrición estilo diario */
 .rem{display:flex;align-items:center;justify-content:space-between;gap:14px}
-.rem .big{font-family:"Bricolage Grotesque";font-weight:800;font-size:34px;line-height:1;letter-spacing:-.02em}
+.rem .big{font-family:"Bricolage Grotesque";font-weight:800;font-size:38px;line-height:1;letter-spacing:-.02em;text-shadow:0 0 26px currentColor}
 .rem .lab{font-family:"JetBrains Mono";font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-top:4px}
 .krow{display:flex;justify-content:space-between;gap:8px;margin-top:12px;font-family:"JetBrains Mono";font-size:11px}
 .krow .c{flex:1;text-align:center}.krow .c .n{font-family:"Bricolage Grotesque";font-weight:800;font-size:16px;color:var(--tx)}.krow .c .k{color:var(--dim);font-size:9px;letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
@@ -371,9 +391,10 @@ function todayFoodTotals(){const d=getDay();return d.foods.reduce((a,f)=>{a.kc+=
 function aura(p){if(p<=0)return"Noche";if(p<.25)return"Noche";if(p<.5)return"Amanecer";if(p<.75)return"Aurora";if(p<1)return"Sol";return"Pleno oro";}
 function streak(){let s=0;for(let i=0;i<400;i++){const d=new Date();d.setDate(d.getDate()-i);const k=todayKey(d);if(!S.days[k]){if(i===0)continue;else break;}if(overallPct(k)>=.6)s++;else if(i>0)break;}return s;}
 function greetWord(){const h=new Date().getHours();if(h<12)return"Buenos días";if(h<19)return"Buenas tardes";return"Buenas noches";}
+function fmtWake(w){w=w||"05:30";const[h,m]=w.split(":").map(Number);const ap=h<12?"AM":"PM";let hh=h%12;if(hh===0)hh=12;return `${hh}:${String(m).padStart(2,"0")} <small>${ap}</small>`;}
 function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("on");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("on"),1900);}
 const CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="#08080D" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
-function ringStyle(pct,color,size){return `width:${size}px;height:${size}px;background:radial-gradient(closest-side,var(--ink) 74%,transparent 75%),conic-gradient(${color} ${(pct*360).toFixed(1)}deg,#26263a 0)`;}
+function ringStyle(pct,color,size){return `width:${size}px;height:${size}px;background:radial-gradient(closest-side,var(--ink) 73%,transparent 74%),conic-gradient(${color} ${(pct*360).toFixed(1)}deg,#23233a 0);box-shadow:0 0 24px -6px ${color},inset 0 0 12px -6px ${color}`;}
 
 /* ============ ICON SYSTEM (monoline propio) ============ */
 const ICONS={
@@ -429,11 +450,16 @@ function vPanel(){
   const ft=todayFoodTotals();const rec=getDay().rec;
   const recStr=rec.recovery!=null?`<span data-count="${rec.recovery}">0</span><small>%</small>`:'<small>—</small>';
   return `
+  <div class="greetband">
+    <div class="warmglow"></div><div class="warmglow b"></div>
+    <div class="day">${new Date().toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'})}</div>
+    <div class="hi">${greetWord()},<br><span class="nm">${esc(S.profile.name)}</span> <span class="sun">${ic('sunrise',26)}</span></div>
+    <div class="line">Hoy decides quién te conviertes.</div>
+    <div class="wake"><span class="ico">${ic('sunrise',18)}</span><span><span class="wk">Despertar</span><br><span class="wv">${fmtWake(S.profile.wake)}</span></span></div>
+  </div>
   <div class="p-hero">
     <div class="aurora"></div><div class="aurora b"></div><div class="grain"></div><div class="embers" id="embers"></div>
-    <div class="eye">${new Date().toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'})}</div>
-    <div class="greet">${greetWord()}, ${esc(S.profile.name)} <span class="sun">${ic('sunrise',22)}</span></div>
-    <div class="sub">Tu equilibrio de hoy</div>
+    <div class="sub" style="font-family:'JetBrains Mono';font-style:normal;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);opacity:1;margin:0 0 2px">Tu equilibrio de hoy</div>
     ${stage()}
     <div class="hstats">
       <div class="hstat"><span class="sk">Racha</span><span class="sv"><span data-count="${streak()}">0</span><small> d</small></span></div>
@@ -532,7 +558,7 @@ function vPillar(p){
     <div class="fill" style="background:linear-gradient(180deg,transparent,${P.color}22 60%,${P.color}44);opacity:${(0.4+pct*0.6).toFixed(2)}"></div>
     <div class="row" style="align-items:flex-start">
       <div><span class="phic" style="color:${P.color}">${ic(P.icon,30,1.8)}</span><h2 style="color:${P.color}">${P.name}</h2><div class="sub">${P.sub}</div></div>
-      <div class="ring" style="${ringStyle(pct,P.color,72)}"><div class="in"><div class="big" style="font-size:20px">${Math.round(pct*100)}%</div></div></div>
+      <div class="ring" style="${ringStyle(pct,P.color,80)}"><div class="in"><div class="big" style="font-size:22px;color:${P.color};text-shadow:0 0 20px ${P.color}66">${Math.round(pct*100)}%</div></div></div>
     </div>
   </div>
   ${modules}<div style="height:10px"></div>`;
@@ -734,7 +760,7 @@ function recoveryModule(){
   let spark="";for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=todayKey(d);const rv=(S.days[k]&&S.days[k].rec.recovery)||0;spark+=`<div style="flex:1;height:${Math.max(4,rv)}%;border-radius:3px 3px 0 0;background:${rv>=66?'var(--green)':rv>=34?'var(--gold)':'var(--coral)'};min-height:4px"></div>`;}
   return `<div class="sec-title" style="color:var(--cuerpo)">Recovery · WHOOP</div>
   <div class="card">
-    <div class="row"><div class="ring" style="${ringStyle((r.recovery||0)/100,'var(--green)',104)}"><div class="in"><div class="big tnum" style="font-size:24px;color:var(--green)">${r.recovery!=null?r.recovery+'%':'—'}</div><div class="mono" style="font-size:9px;color:var(--mid)">RECOVERY</div></div></div>
+    <div class="row"><div class="ring" style="${ringStyle((r.recovery||0)/100,'var(--green)',104)}"><div class="in"><div class="big tnum" style="font-size:26px;color:var(--green);text-shadow:0 0 20px var(--green)">${r.recovery!=null?r.recovery+'%':'—'}</div><div class="mono" style="font-size:9px;color:var(--mid)">RECOVERY</div></div></div>
     <div style="flex:1;margin-left:14px"><div class="mono dim" style="font-size:11px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.1em">Semana</div><div style="display:flex;gap:5px;align-items:flex-end;height:54px">${spark}</div></div></div>
     <div class="g2" style="margin-top:14px">${inp("recovery","Recovery %")}${inp("strain","Strain")}</div>
     <div class="g2">${inp("sleep","Sueño (h)")}${inp("cal","Calorías")}</div>
@@ -826,7 +852,7 @@ function openSettings(){
    <div class="sec-title" style="margin-top:20px">Tus datos</div>
    <button class="pillbtn ghost" style="width:100%;margin-bottom:8px" onclick="exportData()">⬇︎ Exportar respaldo (.json)</button>
    <label class="pillbtn ghost" style="width:100%;display:flex">⬆︎ Importar respaldo<input type="file" accept="application/json,.json" style="display:none" onchange="importData(this)"></label>
-   <div class="dim mono" style="font-size:10.5px;margin-top:10px;line-height:1.6">Tus frases y versos son editables — revisa que las atribuciones te cuadren. Todo se guarda en este dispositivo; usa "Exportar" para respaldar o mover tus datos. v0.2 · Mente·Cuerpo·Alma</div>`);
+   <div class="dim mono" style="font-size:10.5px;margin-top:10px;line-height:1.6">Tus frases y versos son editables — revisa que las atribuciones te cuadren. Todo se guarda en este dispositivo; usa "Exportar" para respaldar o mover tus datos. v2.0 · Mente·Cuerpo·Alma</div>`);
 }
 function saveSettings(){S.profile.name=document.getElementById("sn").value.trim()||"Juan";S.profile.wake=document.getElementById("sw").value||"05:30";
   S.goals.kcal=+document.getElementById("gk").value||2200;S.goals.p=+document.getElementById("gp").value||175;S.goals.c=+document.getElementById("gc").value||230;S.goals.f=+document.getElementById("gf").value||70;
