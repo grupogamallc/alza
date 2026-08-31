@@ -86,20 +86,19 @@ textarea{resize:vertical;min-height:90px;line-height:1.5}
 .p-hero .sub{font-family:"Fraunces";font-style:italic;color:var(--golds);font-size:15px;margin-top:4px;opacity:.92}
 
 /* EDITORIAL GREETING BAND (v2 · estilo carta) */
-.greetband{position:relative;border-radius:24px;overflow:hidden;padding:26px 22px 24px;margin-bottom:12px;border:1px solid var(--line);background:linear-gradient(180deg,#141019,#0A0A10 72%);box-shadow:0 30px 60px -46px #000,inset 0 1px 0 rgba(255,255,255,.05)}
+.greetband{position:relative;border-radius:20px;overflow:hidden;padding:16px 18px;margin-bottom:12px;border:1px solid var(--line);background:linear-gradient(180deg,#141019,#0A0A10 72%);box-shadow:0 24px 50px -44px #000,inset 0 1px 0 rgba(255,255,255,.05)}
 .greetband .warmglow{position:absolute;inset:0;z-index:0;background:radial-gradient(90% 62% at 50% -14%,rgba(255,193,94,.34),rgba(242,149,75,.12) 40%,transparent 66%);animation:breathe 10s ease-in-out infinite}
 .greetband .warmglow.b{background:radial-gradient(70% 46% at 78% 0%,rgba(194,68,126,.20),transparent 60%);animation-duration:14s;animation-direction:alternate-reverse;filter:blur(4px)}
 .greetband>*{position:relative;z-index:2}
-.greetband .day{font-family:"JetBrains Mono";font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--golds);opacity:.85}
-.greetband .hi{font-family:"Fraunces";font-weight:500;font-size:33px;line-height:1.08;letter-spacing:-.01em;color:#FBF3E7;margin-top:9px}
+.greetband .ghead{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.greetband .day{font-family:"JetBrains Mono";font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--golds);opacity:.82}
+.greetband .hi{font-family:"Fraunces";font-weight:500;font-size:23px;line-height:1.12;letter-spacing:-.01em;color:#FBF3E7;margin-top:4px;white-space:nowrap}
 .greetband .hi .nm{font-style:italic;color:var(--gold)}
-.greetband .hi .sun{display:inline-flex;vertical-align:-6px;margin-left:4px;color:var(--gold);filter:drop-shadow(0 0 12px rgba(255,193,94,.6))}
-.greetband .line{font-family:"Fraunces";font-style:italic;font-size:15.5px;color:var(--golds);margin-top:8px;opacity:.9}
-.greetband .wake{display:inline-flex;align-items:center;gap:9px;margin-top:16px;padding:9px 14px;border-radius:13px;border:1px solid rgba(255,193,94,.28);background:rgba(255,193,94,.07)}
-.greetband .wake .wk{font-family:"JetBrains Mono";font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
-.greetband .wake .wv{font-family:"Bricolage Grotesque";font-weight:800;font-size:19px;line-height:1;color:#FBF3E7}
-.greetband .wake .wv small{font-size:11px;color:var(--dim);font-weight:600;margin-left:2px}
-.greetband .wake .ico{color:var(--gold);display:inline-flex}
+.greetband .hi .sun{display:inline-flex;vertical-align:-4px;margin-left:3px;color:var(--gold);filter:drop-shadow(0 0 10px rgba(255,193,94,.55))}
+.greetband .wakemini{text-align:right;flex:none;line-height:1.05}
+.greetband .wakemini .wk{display:block;font-family:"JetBrains Mono";font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.greetband .wakemini .wv{font-family:"Bricolage Grotesque";font-weight:800;font-size:17px;color:#FBF3E7}
+.greetband .wakemini .wv small{font-size:10px;color:var(--dim);font-weight:600;margin-left:2px}
 
 /* STAGE (triangulo Mente/Cuerpo/Alma) */
 .stage{position:relative;width:100%;max-width:352px;margin:8px auto 2px}
@@ -452,10 +451,13 @@ function vPanel(){
   return `
   <div class="greetband">
     <div class="warmglow"></div><div class="warmglow b"></div>
-    <div class="day">${new Date().toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'})}</div>
-    <div class="hi">${greetWord()},<br><span class="nm">${esc(S.profile.name)}</span> <span class="sun">${ic('sunrise',26)}</span></div>
-    <div class="line">Hoy decides quién te conviertes.</div>
-    <div class="wake"><span class="ico">${ic('sunrise',18)}</span><span><span class="wk">Despertar</span><br><span class="wv">${fmtWake(S.profile.wake)}</span></span></div>
+    <div class="ghead">
+      <div>
+        <div class="day">${new Date().toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'})}</div>
+        <div class="hi">${greetWord()}, <span class="nm">${esc(S.profile.name)}</span> <span class="sun">${ic('sunrise',18)}</span></div>
+      </div>
+      <div class="wakemini"><span class="wk">Despertar</span><span class="wv">${fmtWake(S.profile.wake)}</span></div>
+    </div>
   </div>
   <div class="p-hero">
     <div class="aurora"></div><div class="aurora b"></div><div class="grain"></div><div class="embers" id="embers"></div>
