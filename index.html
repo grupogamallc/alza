@@ -352,7 +352,7 @@ const INBODY=[
 const KEY="alza_v2";
 const DEFAULT={
   profile:{name:"Juan",wake:"05:30",showVerse:true},
-  goals:{kcal:2200,p:175,c:230,f:70},
+  goals:{kcal:1996,p:220,c:180,f:44},
   habits:JSON.parse(JSON.stringify(SEED_HABITS)),
   foodDB:JSON.parse(JSON.stringify(SEED_FOODS)),
   quotes:JSON.parse(JSON.stringify(SEED_QUOTES)),
@@ -364,6 +364,8 @@ const DEFAULT={
 let S=load();
 if(!S.whoop)S.whoop={on:false,last:null};
 if(!S.inbody)S.inbody={weight:{c:275.4,p:null},smm:{c:114.6,p:null},pbf:{c:27.1,p:null},vfat:{c:null,p:null}};
+/* Meta de macros de septiembre 2026 (ajuste único; después editable en Ajustes) */
+if(!S.macroGoalSep26){S.goals={kcal:1996,p:220,c:180,f:44};S.macroGoalSep26=true;}
 /* ===== WHOOP ===== */
 const WHOOP_BASE="https://wgkwfctbwiwoaycbtuia.supabase.co/functions/v1";
 const WHOOP_KEY="83da7afab473474bb0e8bddacfe7824b";
@@ -918,7 +920,7 @@ function openSettings(){
    <div class="dim mono" style="font-size:10.5px;margin-top:10px;line-height:1.6">Tus frases y versos son editables — revisa que las atribuciones te cuadren. Todo se guarda en este dispositivo; usa "Exportar" para respaldar o mover tus datos. v2.0 · Mente·Cuerpo·Alma</div>`);
 }
 function saveSettings(){S.profile.name=document.getElementById("sn").value.trim()||"Juan";S.profile.wake=document.getElementById("sw").value||"05:30";
-  S.goals.kcal=+document.getElementById("gk").value||2200;S.goals.p=+document.getElementById("gp").value||175;S.goals.c=+document.getElementById("gc").value||230;S.goals.f=+document.getElementById("gf").value||70;
+  S.goals.kcal=+document.getElementById("gk").value||1996;S.goals.p=+document.getElementById("gp").value||220;S.goals.c=+document.getElementById("gc").value||180;S.goals.f=+document.getElementById("gf").value||44;
   closeSheet();render();toast("Guardado");}
 async function exportData(){const data=JSON.stringify(S,null,2);
   const dl=(typeof claude!=="undefined"&&claude&&claude.use)?await claude.use("downloads").catch(()=>null):null;
