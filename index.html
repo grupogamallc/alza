@@ -11,7 +11,7 @@
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
 <style>
 :root{
   --ink:#08080D;--ink2:#0E0E16;--surface:#15151F;--surface2:#1C1C2A;
@@ -90,15 +90,10 @@ textarea{resize:vertical;min-height:90px;line-height:1.5}
 .greetband .warmglow{position:absolute;inset:0;z-index:0;background:radial-gradient(90% 62% at 50% -14%,rgba(255,193,94,.34),rgba(242,149,75,.12) 40%,transparent 66%);animation:breathe 10s ease-in-out infinite}
 .greetband .warmglow.b{background:radial-gradient(70% 46% at 78% 0%,rgba(194,68,126,.20),transparent 60%);animation-duration:14s;animation-direction:alternate-reverse;filter:blur(4px)}
 .greetband>*{position:relative;z-index:2}
-.greetband .ghead{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.greetband .day{font-family:"JetBrains Mono";font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--golds);opacity:.82}
-.greetband .hi{font-family:"Fraunces";font-weight:500;font-size:23px;line-height:1.12;letter-spacing:-.01em;color:#FBF3E7;margin-top:4px;white-space:nowrap}
-.greetband .hi .nm{font-style:italic;color:var(--gold)}
-.greetband .hi .sun{display:inline-flex;vertical-align:-4px;margin-left:3px;color:var(--gold);filter:drop-shadow(0 0 10px rgba(255,193,94,.55))}
-.greetband .wakemini{text-align:right;flex:none;line-height:1.05}
-.greetband .wakemini .wk{display:block;font-family:"JetBrains Mono";font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
-.greetband .wakemini .wv{font-family:"Bricolage Grotesque";font-weight:800;font-size:17px;color:#FBF3E7}
-.greetband .wakemini .wv small{font-size:10px;color:var(--dim);font-weight:600;margin-left:2px}
+.greetband .day{font-family:"Instrument Sans",system-ui,sans-serif;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--golds);opacity:.82}
+.greetband .hi{font-family:"Instrument Sans",system-ui,sans-serif;font-weight:600;font-size:26px;line-height:1.15;letter-spacing:-.02em;color:#FBF3E7;margin-top:7px}
+.greetband .hi .nm{color:var(--gold);font-weight:700}
+.greetband .hi .sun{display:inline-flex;vertical-align:-3px;margin-left:5px;color:var(--gold);filter:drop-shadow(0 0 10px rgba(255,193,94,.55))}
 
 /* STAGE (triangulo Mente/Cuerpo/Alma) */
 .stage{position:relative;width:100%;max-width:352px;margin:8px auto 2px}
@@ -476,13 +471,8 @@ function vPanel(){
   return `
   <div class="greetband">
     <div class="warmglow"></div><div class="warmglow b"></div>
-    <div class="ghead">
-      <div>
-        <div class="day">${new Date().toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'})}</div>
-        <div class="hi">${greetWord()}, <span class="nm">${esc(S.profile.name)}</span> <span class="sun">${ic('sunrise',18)}</span></div>
-      </div>
-      <div class="wakemini"><span class="wk">Despertar</span><span class="wv">${fmtWake(S.profile.wake)}</span></div>
-    </div>
+    <div class="day">${new Date().toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'})}</div>
+    <div class="hi">${greetWord()}, <span class="nm">${esc(S.profile.name)}</span> <span class="sun">${ic('sunrise',18)}</span></div>
   </div>
   <div class="p-hero">
     <div class="aurora"></div><div class="aurora b"></div><div class="grain"></div><div class="embers" id="embers"></div>
