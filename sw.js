@@ -1,5 +1,5 @@
 // ALZA service worker — network-first (siempre carga lo mas nuevo; cache solo de respaldo offline)
-const C = "alza-v2-8";
+const C = "alza-v2-9";
 const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg"];
 
 self.addEventListener("install", (e) => {

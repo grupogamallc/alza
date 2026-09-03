@@ -127,6 +127,17 @@ textarea{resize:vertical;min-height:90px;line-height:1.5}
 .hstat .sk{font-family:"JetBrains Mono";font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--mid)}
 .hstat .sv{font-family:"Bricolage Grotesque";font-weight:800;font-size:19px;line-height:1}
 .hstat .sv small{font-size:10px;color:var(--dim);font-weight:600}
+/* WHOOP 3-ring card (Panel) */
+.whoopcard{border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,var(--surface),var(--ink2));padding:17px 12px 15px;margin-bottom:14px;box-shadow:0 22px 46px -40px #000,inset 0 1px 0 rgba(255,255,255,.04)}
+.whoopcard .wh{text-align:center;font-family:"JetBrains Mono";font-weight:700;letter-spacing:.34em;font-size:12px;color:var(--mid);margin:0 0 15px .34em}
+.wrings{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.wr{display:flex;flex-direction:column;align-items:center;gap:9px;cursor:pointer}
+.wring{width:90px;height:90px;max-width:100%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;filter:drop-shadow(0 0 9px rgba(0,0,0,.4))}
+.wr .wv{font-family:"Bricolage Grotesque";font-weight:800;font-size:22px;color:#fff;letter-spacing:-.02em}
+.wr .wv small{font-size:13px;color:var(--mid);font-weight:800}
+.wr .wl{font-family:"JetBrains Mono";font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--mid)}
+.wr .wch{color:var(--dim)}
+.whconnect{text-align:center;color:var(--cuerpo);font-size:13px;padding:4px 10px 6px;cursor:pointer}
 
 /* pillar hero (sub pages) */
 .ph{position:relative;border-radius:22px;overflow:hidden;padding:20px 18px;margin-bottom:14px;border:1px solid var(--line);box-shadow:0 26px 54px -42px #000,inset 0 1px 0 rgba(255,255,255,.05)}
@@ -523,6 +534,23 @@ function nav(){
 function go(t){S.ui.tab=t;render();window.scrollTo(0,0);}
 
 /* ============ PANEL ============ */
+function wringBg(pct,col){const d=(Math.max(0,Math.min(1,pct))*360).toFixed(1);return `background:radial-gradient(closest-side,var(--ink2) 79%,transparent 80%),conic-gradient(${col} ${d}deg,#242436 0)`;}
+function whoopPanel(){
+  const r=getDay().rec||{};const last=(S.whoop&&S.whoop.last)||{};
+  const gv=(a,b)=>a!=null?a:(b!=null?b:null);
+  const sleep=gv(r.sleep,last.sleep!=null?Math.round(last.sleep):null);
+  const rec=gv(r.recovery,last.recovery!=null?Math.round(last.recovery):null);
+  const strain=gv(r.strain,last.strain!=null?+(+last.strain).toFixed(1):null);
+  if(sleep==null&&rec==null&&strain==null)
+    return `<div class="whoopcard"><div class="wh">WHOOP</div><div class="whconnect" onclick="connectWhoop()">Conecta WHOOP para ver sueño, recovery y strain aquí →</div></div>`;
+  const recCol=rec==null?'#6b6f7e':(rec>=67?'#16D170':rec>=34?'#FFC400':'#FF4757');
+  const ring=(lbl,disp,pct,col)=>`<div class="wr" onclick="go('cuerpo')"><div class="wring" style="${wringBg(pct,col)}"><span class="wv">${disp}</span></div><div class="wl">${lbl} <span class="wch">›</span></div></div>`;
+  return `<div class="whoopcard"><div class="wh">WHOOP</div><div class="wrings">
+    ${ring('SLEEP',sleep!=null?sleep+'<small>%</small>':'—',(sleep||0)/100,'#9DB8E0')}
+    ${ring('RECOVERY',rec!=null?rec+'<small>%</small>':'—',(rec||0)/100,recCol)}
+    ${ring('STRAIN',strain!=null?strain:'—',(strain||0)/21,'#3FA7FF')}
+  </div></div>`;
+}
 function vPanel(){
   const q=S.quotes[dayOfYear()%S.quotes.length];const v=S.verses[dayOfYear()%S.verses.length];
   const ft=todayFoodTotals();const rec=getDay().rec;
@@ -537,13 +565,8 @@ function vPanel(){
     <div class="aurora"></div><div class="aurora b"></div><div class="grain"></div><div class="embers" id="embers"></div>
     <div class="sub" style="font-family:'JetBrains Mono';font-style:normal;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);opacity:1;margin:0 0 2px">Tu equilibrio de hoy</div>
     ${stage()}
-    <div class="hstats">
-      <div class="hstat"><span class="sk">Racha</span><span class="sv"><span data-count="${streak()}">0</span><small> d</small></span></div>
-      <div class="hstat tap" onclick="go('cuerpo')"><span class="sk">Recovery</span><span class="sv">${recStr}</span></div>
-      <div class="hstat tap" onclick="go('cuerpo')"><span class="sk">Kcal</span><span class="sv"><span data-count="${Math.round(ft.kc)||0}">0</span></span></div>
-      <div class="hstat"><span class="sk">Momentum</span><span class="sv"><span data-count="${momentumScore()}">0</span><small>/100</small></span></div>
-    </div>
   </div>
+  ${whoopPanel()}
   <div class="sec-title">Palabra de hoy</div>
   <div class="quote"><div class="q">"${esc(q.t)}"</div><div class="att">— ${esc(q.a)}</div></div>
   ${S.profile.showVerse?`<div class="verse"><div class="q">"${esc(v.t)}"</div><b>${esc(v.r)}</b></div>`:""}
